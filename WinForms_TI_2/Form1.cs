@@ -16,7 +16,6 @@ namespace WinForms_TI_2
 
         const int MAX_LENGTH = 20;
         byte[] messageBytes;
-        byte[] keyBytes;
         byte[] resultBytes;
         ulong g;
         ulong p;
@@ -98,7 +97,7 @@ namespace WinForms_TI_2
                 {
                     MessageBox.Show("Число простое.");
                     List<ulong> primitiveRoots = FindPrimitiveRoots(p);
-                    OutputToListBox(primitiveRoots);
+                    OutputToListBox(primitiveRoots); 
 
                 }
                 else
@@ -274,9 +273,9 @@ namespace WinForms_TI_2
         }
 
         // Метод для дешифрования
-        public string Decrypt()
+        public void Decrypt()
         {
-            byte[] decryptedBytes = new byte[c.Count / 2];
+            resultBytes = new byte[c.Count / 2];
 
             for (int i = 0; i < c.Count; i += 2)
             {
@@ -286,10 +285,8 @@ namespace WinForms_TI_2
                 // Вычисляем m
                 ulong m = b * ModularExponentiation(a, p - 1 - x, p) % p;
 
-                decryptedBytes[i / 2] = (byte)m;
+                resultBytes[i / 2] = (byte)m;
             }
-
-            return System.Text.Encoding.UTF8.GetString(decryptedBytes);
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -325,15 +322,15 @@ namespace WinForms_TI_2
             saveFileDialog.FilterIndex = 1;
             saveFileDialog.RestoreDirectory = true;
 
-            resultBytes = new byte[messageBytes.Length];
-
-
+/*            resultBytes = new byte[messageBytes.Length];
+*/
+/*
             for (int i = 0; i < richTextBox2.Text.Length; i++)
             {
                 int byteIndex = i / 8;
                 int bitIndex = i % 8;
                 resultBytes[byteIndex] |= (byte)((richTextBox2.Text[i] - '0') << (7 - bitIndex));
-            }
+            }*/
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -354,25 +351,8 @@ namespace WinForms_TI_2
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (keyBytes.Length != resultBytes.Length)
-            {
-                Console.WriteLine("Длины массивов не совпадают, операция XOR не может быть выполнена.");
-                return;
-            }
 
-            for (int i = 0; i < keyBytes.Length; i++)
-            {
-                messageBytes[i] = (byte)(keyBytes[i] ^ resultBytes[i]);
-            }
-
-            string messageString = "";
-
-            foreach (byte b in messageBytes)
-            {
-                messageString += Convert.ToString(b, 2).PadLeft(8, '0');
-            }
-
-            richTextBox2.Text = messageString;
+            Decrypt();
         }
 
         private void label5_Click(object sender, EventArgs e)
